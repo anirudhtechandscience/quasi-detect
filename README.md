@@ -4,3 +4,5 @@ This is a project meant to automate detecting celestial objects. At the moment t
 ## Tech Stack
 
 ![Flutter](https://storage.googleapis.com/cms-storage-bucket/a9d6ce81aee44ae017ee.png)
+
+![Tensorflow](https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/TensorFlow_logo.svg/1920px-TensorFlow_logo.svg.png)
