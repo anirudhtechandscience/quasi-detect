@@ -1,5 +1,5 @@
 # quasi-detect
-This is a project meant to automate detecting celestial objects. At the moment the project is at a very early stage and the code looks embarassing, so it will take a while before I release any code (of course it will be FULLY open source).
+This is a project meant to automate detecting celestial objects. At the moment the project is not even functional yet and very little code is available, and it WILL take a couple of months. (of course it will be FULLY open source).
 
 ## Tech Stack
 <div align="center">
@@ -20,11 +20,11 @@ This is a project meant to automate detecting celestial objects. At the moment t
 
 ## So WHAT is your approach then?
 
-I've decided to use a CNN to learn from spectra from SDSS. The reasoning for this is that , well, it just looked like there is MORE data for the model to process than with dim little dots that are like 4 pixels across (of course there are brighter ones, but most quasars are like this). I cannot use the entire catalog at the moment since my computer only has 8GB RAM and it pretty slow overall so I can't overuse batching unless its worth it to wait months for a simple file full of weights. Also, I will probably implement the PowerSign optimizer from [link to paper](https://arxiv.org/abs/1709.07417) to improve the time it takes to converge, which is very important with my very limited hardware. A custom loss is also in order.\0
+I've decided to use a CNN to learn from spectra from SDSS. The reasoning for this is that , well, it just looked like there is MORE data for the model to process than with dim little dots that are like 4 pixels across if I used pictures (of course there are brighter ones, but most quasars are like this). I cannot use the entire catalog at the moment since my computer only has 8GB RAM and it pretty slow overall so I can't overuse batching unless its worth it to wait months for a simple file full of weights. Also, I will probably implement the PowerSign optimizer from [link to paper](https://arxiv.org/abs/1709.07417) to improve the time it takes to converge, which is very important with my very limited hardware. A custom loss is also in order.\0
 
 ## How can you help
 
-At the moment, since I have not released any code , you can't contribute to the code. This is my first serious project ,so if you see bad code quality, please tell me.
+The most helpful thing would be contributing to the codebase. This is my first serious project ,so if you see bad code quality, please tell me.
 I would never stop this project because of my PC ,but it's not fun to use a crusty Dell that gets skin-burningly hot ,but still chugs when opening a browser,for ML tasks.
 Donations, if you can can afford it, are appreciated at BTC address : bc1qlk2hpgh3kg5l3psscdsduep5qul0dszmwwrtrf
 
