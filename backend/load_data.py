@@ -12,10 +12,12 @@ class loadData:
     def __init__(self,qsoPath="/home/tux/Downloads/QSO",othPath="/home/tux/Downloads/oth"):
         self._dirPathQuasar = qsoPath
         self._dirPathOther = othPath
-        self.qsoSpectra = np.empty((0, 2, 5000), dtype=np.longdouble)
-        self.othSpectra = np.empty((0, 2, 5000), dtype=np.longdouble)
-        self.othLabels = None
-        self.qsoLabels = None
+        self._qsoSpectra = np.empty((0, 2, 5000), dtype=np.longdouble)
+        self._othSpectra = np.empty((0, 2, 5000), dtype=np.longdouble)
+        self._othLabels = None
+        self._qsoLabels = None
+        self.labels = None
+        self.spectra = None
         
     def loadQSOData(self):
         """
@@ -38,8 +40,8 @@ class loadData:
                         loglam = np.pad(loglam, (0, 5000 - len(loglam)), mode='constant', constant_values=0)
                         flux = np.pad(flux, (0,5000 - len(flux)), mode='constant', constant_values=0)
                         spectrum = np.stack([loglam,flux])
-                        self.qsoSpectra = np.append(self.qsoSpectra, [spectrum], axis=0)
-            self.qsoLabels = np.ones(self.qsoSpectra.shape[0])
+                        self._qsoSpectra = np.append(self._qsoSpectra, [spectrum], axis=0)
+            self._qsoLabels = np.ones(self._qsoSpectra.shape[0],dtype=np.int8)
         except FileNotFoundError:
             print("FileNotFoundError, please check if the path is valid")
         except Exception as e:
@@ -67,11 +69,24 @@ class loadData:
                         loglam = np.pad(loglam, (0, 5000 - len(loglam)), mode='constant', constant_values=0)
                         flux = np.pad(flux, (0,5000 - len(flux)), mode='constant', constant_values=0)
                         spectrum = np.stack([loglam,flux])
-                        self.othSpectra = np.append(self.othSpectra, [spectrum], axis=0)
-            self.othLabels = np.zeros(self.othSpectra.shape[0])
+                        self._othSpectra = np.append(self._othSpectra, [spectrum], axis=0)
+            self._othLabels = np.zeros(self._othSpectra.shape[0],dtype=np.int8)
         except FileNotFoundError:
             print("FileNotFoundError, please check if the path is valid")
         except Exception as e:
             print(f"A error occured : {e}")
 
-    
+    def combineDataLabels(self):
+        """
+            This combines both the arrays of labels into one array, to be fed 
+            into the neural network.
+        """
+
+        self.labels = np.concatenate((self._qsoLabels,self._othLabels),axis=0)
+
+    def combineDataSpectra(self):
+        """
+            This combines both the arrays of labels into one array, to be fed 
+            into the preProcessor class
+        """
+        self.spectra = np.concatenate((self._qsoSpectra,self._othSpectra),axis=0)
