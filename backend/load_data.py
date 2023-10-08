@@ -18,6 +18,14 @@ class loadData:
         self.qsoLabels = None
         
     def loadQSOData(self):
+        """
+            This loads the relevant columns from the .fits files , which is basically 
+            the spectrum, and then makes a array with a 1 for every spectrum, as the 
+            labels(Initially it will just tell quasars apart from other objects to 
+            reduce complexity, later it will detect all kinds of objects). Both arrays 
+            will be combined with the arrays of the stars and galaxies using 
+            the combineData methods.
+        """ 
         try:
             for fileName in os.listdir(self._dirPathQuasar):
                 if fileName.endswith('.fits'):
@@ -36,7 +44,17 @@ class loadData:
             print("FileNotFoundError, please check if the path is valid")
         except Exception as e:
             print(f"A error occured : {e}")
+
+
     def loadOthData(self):
+        """
+            This loads the relevant columns from the .fits files , which is basically 
+            the spectrum, and then makes a array with a 0 for every spectrum, as the 
+            labels(Initially it will just tell quasars apart from other objects to 
+            reduce complexity, later it will detect all kinds of objects). Both arrays 
+            will be combined with the arrays of the quasars using 
+            the combineData methods.
+        """ 
         try:
             for fileName in os.listdir(self._dirPathOther):
                 if fileName.endswith('.fits'):
@@ -55,3 +73,5 @@ class loadData:
             print("FileNotFoundError, please check if the path is valid")
         except Exception as e:
             print(f"A error occured : {e}")
+
+    
