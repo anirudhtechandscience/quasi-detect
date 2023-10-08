@@ -91,7 +91,7 @@ class loadData:
         """
         self.spectra = np.concatenate((self._qsoSpectra,self._othSpectra),axis=0)
 
-    def spectra(self):
+    def getSpectra(self):
         """
             A simple method to retrieve the spectra
         """
@@ -102,7 +102,7 @@ class loadData:
             self.loadOthData()
             self.combineDataSpectra()
             return self.spectra
-    def labels(self):
+    def getLabels(self):
         """
             A simple method to retrieve the labels
         """
