@@ -90,3 +90,29 @@ class loadData:
             into the preProcessor class
         """
         self.spectra = np.concatenate((self._qsoSpectra,self._othSpectra),axis=0)
+
+    def spectra(self):
+        """
+            A simple method to retrieve the spectra
+        """
+        if self.spectra:
+            return self.spectra
+        else:
+            self.loadQSOData()
+            self.loadOthData()
+            self.combineDataSpectra()
+            return self.spectra
+    def labels(self):
+        """
+            A simple method to retrieve the labels
+        """
+        if self.labels:
+            return self.labels
+        else:
+            self.loadQSOData()
+            self.loadOthData()
+            self.combineDataLabels()
+            return self.labels
+
+
+
