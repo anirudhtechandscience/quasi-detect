@@ -179,6 +179,7 @@ class preProcessor:
             else:
                 self._normalize()
                 self._randomShifts()
+                return self.outSpectra
 
 
 
