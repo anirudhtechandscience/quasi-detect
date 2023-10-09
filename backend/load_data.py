@@ -160,13 +160,13 @@ class preProcessor:
         0.00005,0.00006,0.00007,0.00008
         ,0.00009,0.0001]
         ,dtype=np.longdouble) 
+        self.outSpectra = np.copy(self._normalizedSpectra)
         numShifts = 24000 #just a random number
         for _ in range(numShifts):
             random2dSubarray = np.random.randint(0,self._normalizedSpectra.shape[0])
             random1dSubarray = np.random.randint(0,self._normalizedSpectra.shape[1])
             randomValue = np.random.randint(0,self._normalizedSpectra.shape[2])
             shiftValue = np.random.choice(shiftValues)
-            self.outSpectra = np.copy(self._normalizedSpectra)
             self.outSpectra[random2dSubarray][random1dSubarray][randomValue] += shiftValue
 
         def getSpectra(self):
