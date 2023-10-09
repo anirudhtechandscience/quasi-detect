@@ -151,7 +151,7 @@ class preProcessor:
     
     def _randomShifts(self):
         """
-            Add some very small random shifts to the spectra
+            Add some very small random shifts to the spectra,to simulate noise.
         """
 
         shiftValues = np.array([-0.0001,-0.00009,-0.00008,-0.00007,-0.00006
