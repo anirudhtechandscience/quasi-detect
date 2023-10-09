@@ -143,7 +143,7 @@ class preProcessor:
 
     def _normalize(self):
         """
-            Just, well normalizes the data.
+            Just, well normalizes the data between 0 and 1.
         """
 
         normalizeValue = np.linalg.norm(self._spectra, 'fro')
