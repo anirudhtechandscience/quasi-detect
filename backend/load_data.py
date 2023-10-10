@@ -144,10 +144,23 @@ class preProcessor:
     def _normalize(self):
         """
             Just, well normalizes the data between 0 and 1.
-        """
+            """
+        loglam = np.array(dtype=np.longdouble)
+        flux = np.array(dtype=np.longdouble)
+        for _ in range(self._spectra.shape[0]):
+            loglam = np.stack([loglam,self._spectra[_][0]])
+        for __ in range(self._spectra.shape[0]):
+            flux = np.stack([flux,self._spectra[__][1]])
+        normalizeFlux = np.linalg.norm(flux, 'fro')
+        normalizeLoglam = np.linalg.norm(loglam, 'fro')
+        self._normalizedSpectra = np.copy(self._spectra)
+        for ___ in range(self._spectra.shape[0]):
+            self._normalizedSpectra[___][1] = self._normalizedSpectra[___][1] / normalizeFlux
+        
+        for ____ in range(self._spectra.shape[0]):
+            self._normalizedSpectra[____][0] = self._normalizedSpectra[____][0] / normalizeLoglam
 
-        normalizeValue = np.linalg.norm(self._spectra, 'fro')
-        self._normalizedSpectra = self._spectra / normalizeValue
+
     
     def _randomShifts(self):
         """
@@ -161,13 +174,18 @@ class preProcessor:
         ,0.00009,0.0001]
         ,dtype=np.longdouble) 
         self.outSpectra = np.copy(self._normalizedSpectra)
-        numShifts = 24000 #just a random number
+        numShifts = self._normalizedSpectra.shape[0] 
+        numSubShift = 450 #every sub array will have this amount of values shifted
+        self.outSpectra = np.copy(self._normalizedSpectra)
         for _ in range(numShifts):
-            random2dSubarray = np.random.randint(0,self._normalizedSpectra.shape[0])
-            random1dSubarray = np.random.randint(0,self._normalizedSpectra.shape[1])
-            randomValue = np.random.randint(0,self._normalizedSpectra.shape[2])
-            shiftValue = np.random.choice(shiftValues)
-            self.outSpectra[random2dSubarray][random1dSubarray][randomValue] += shiftValue
+            random2dSubarray = np.random.randint(0,self._normalizedSpectra.shape[0]) 
+            twoDSubarray = np.copy(self._normalizedSpectra[random2dSubarray])
+            for ___ in range(numSubShift):
+                random1dSubarray = np.random.randint(0,self._normalizedSpectra.shape[1])
+                randomValue = np.random.randint(0,self._normalizedSpectra.shape[2])
+                shiftValue = np.random.choice(shiftValues)
+                twoDSubarray[random1dSubarray][randomValue] += shiftValue
+            self.outSpectra = np.append(self.outSpectra,[twoDSubarray],axis=0)
 
         def getSpectra(self):
             """
@@ -180,8 +198,3 @@ class preProcessor:
                 self._normalize()
                 self._randomShifts()
                 return self.outSpectra
-
-
-
-
-    
