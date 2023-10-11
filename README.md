@@ -25,7 +25,6 @@ I've decided to use a CNN to learn from spectra from SDSS. The reasoning for thi
 ## How can you help
 
 The most helpful thing would be contributing to the codebase. This is my first serious project ,so if you see bad code quality, please tell me.
-I would never stop this project because of my PC ,but it's not fun to use a crusty Dell that gets skin-burningly hot ,but still chugs when opening a browser,for ML tasks.
-Donations, if you can can afford it, are appreciated at BTC address : bc1qlk2hpgh3kg5l3psscdsduep5qul0dszmwwrtrf
+
 
 
