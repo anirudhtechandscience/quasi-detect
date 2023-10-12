@@ -1,0 +1,10 @@
+Some guidelines for contributing include:
+
+1. use CamelCase please
+2. A indent should be 4 spaces, like a tab on most UNIX systems
+3. Test your code before pushing it, faulty code will be automatically rejected.
+4. Mantain decent code quality, I can tolerate a lot, but stuff like using a for loop for check if a number is odd is unacceptable
+
+Q&A:
+
+Will be added when someone asks a question
