@@ -3,6 +3,7 @@ import numpy as np
 import os
 import logging
 import time
+import tensorflow as tf
 
 #This class uses standard Python conventions, such as _ to indicate private objects
 #Also, I use CamelCase across the entire codebase, both frontend and backend
@@ -70,9 +71,15 @@ class loadData:
 class preProcessor:
     def __init__(self,spectra):
         self._spectra = spectra[0]
-        self.labels = spectra[1]
-        self.outSpectra = None
+        self._labels = spectra[1]
+        self._outSpectra = None
         self._normalizedSpectra = None
+        self._testFeatures = None
+        self._testLabels = None
+        self._trainFeatures = None
+        self._trainLabels = None
+        self.trainData = None
+        self.testData = None
 
     def _normalize(self):
         """
@@ -106,10 +113,10 @@ class preProcessor:
         0.00005,0.00006,0.00007,0.00008
         ,0.00009,0.0001]
         ,dtype=np.longdouble) 
-        self.outSpectra = np.copy(self._normalizedSpectra)
+        self._outSpectra = np.copy(self._normalizedSpectra)
         numShifts = self._normalizedSpectra.shape[0] * 0.75
         numSubShift = 450 #every sub array will have this amount of values shifted
-        self.outSpectra = np.copy(self._normalizedSpectra)
+        self._outSpectra = np.copy(self._normalizedSpectra)
         for _ in range(numShifts):
             random2dSubarray = np.random.randint(0,self._normalizedSpectra.shape[0]) 
             twoDSubarray = np.copy(self._normalizedSpectra[random2dSubarray])
@@ -118,16 +125,44 @@ class preProcessor:
                 randomValue = np.random.randint(0,self._normalizedSpectra.shape[2])
                 shiftValue = np.random.choice(shiftValues)
                 twoDSubarray[random1dSubarray][randomValue] += shiftValue
-            self.outSpectra = np.append(self.outSpectra,[twoDSubarray],axis=0)
+            self._outSpectra = np.append(self._outSpectra,[twoDSubarray],axis=0)
+        
+    def _trainTestSplit(self):
+        last15Percent = int(self._outSpectra.shape[0] * 0.85)
+        self._testFeatures = self._outSpectra[last15Percent:]
+        self._testLabels = self._labels[last15Percent:]
+        self._trainFeatures = self._outSpectra[:last15Percent]
+        self._trainLabels = self._labels[:last15Percent]
+    
+    def _convToTensorflowObject(self):
+        self.trainData = tf.data.Dataset.from_tensor_slices((self._trainFeatures,self._trainLabels))
+        self.testData = tf.data.Dataset.from_tensor_slices((self._testFeatures,self._testLabels))
+        batchSize = 1024
+        bufferSize = 100
 
-        def getData(self):
-            """
-                Just returns the preprocessed array
-            """
+        self.trainData = self.trainData.shuffle(bufferSize).batch(batchSize)
+        self.testData = self.testData.batch(batchSize)
 
-            if self.outSpectra:
-                return self.outSpectra
-            else:
-                self._normalize()
-                self._randomShifts()
-                return (self.outSpectra,self.labels)
+
+
+    def getTrainData(self):
+        if self.trainData:
+            return self.trainData
+        else:
+            self._normalize()
+            self._randomShifts()
+            self._trainTestSplit()
+            self._convToTensorflowObject()
+            return self.trainData()
+
+    def getTestData(self):
+        if self.testData:
+            return self.testData
+        else:
+            self._normalize()
+            self._randomShifts()
+            self._trainTestSplit()
+            self._convToTensorflowObject()
+            return self.testData()
+
+

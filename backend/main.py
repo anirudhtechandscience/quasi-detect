@@ -1,6 +1,5 @@
 from load_data import loadData, preProcessor
 import numpy as np
-
 #simple script to run all the other scipts
 
 dataLoader = loadData()
