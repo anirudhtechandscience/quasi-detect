@@ -11,16 +11,42 @@ class loadData:
 
     def __init__(self,qsoPath="/home/tux/Downloads/QSO",
     othPath="/home/tux/Downloads/oth"):
+        qsoSpectra = self._readSpectra(qsoPath)
+        othSpectra = self._readSpectra(othPath)
+        self.spectra = np.concatenate((qsoSpectra, othSpectra), axis=0)
+        
+        qsoLabels = np.ones(qsoSpectra.shape[0], dtype=np.int8)
+        othLabels = np.zeros(othSpectra.shape[0], dtype=np.int8)
+        self.labels = np.concatenate((qsoLabels, othLabels), axis=0)
 
-        self._dirPathQuasar = qsoPath
-        self._dirPathOther = othPath
-        self._qsoSpectra = np.empty((0, 2, 5000), dtype=np.longdouble)
-        self._othSpectra = np.empty((0, 2, 5000), dtype=np.longdouble)
-        self._othLabels = None
-        self._qsoLabels = None
-        self.labels = None
-        self.spectra = None
-        self._maxLength = 5000
+
+
+    def _readSpectra(self, path):
+        spectra = np.empty((0, 2, 5000), dtype=np.longdouble) 
+        for fileName in os.listdir(path):
+            if fileName.endswith('.fits'):
+                filePath= os.path.join(path, fileName)
+                try:
+                    self.spectra = np.append(spectra, self._getSpectrum(filePath))
+                except FileNotFoundError:
+                    print("FileNotFoundError")
+                except Exception as e:
+                    print(f"A error occured reading {filePath}: {e}")
+
+    def _getSpectrum(self, filePath):
+        """ returns the spectrum from a .fits file """
+
+        with fs.open(filePath) as spec:
+            binHDU = spec[1].data
+            loglam = np.array(binHDU['loglam'], dtype=np.longdouble)
+            flux = np.array(binHDU['flux'], dtype=np.longdouble)
+
+        #TODO: Implement a dynamic maximum pad length system
+        loglam = np.pad( loglam, (0, 5000 - len(loglam)), mode='constant', constant_values=0 )
+        flux = np.pad( flux, (0,5000 - len(flux)), mode='constant', constant_values=0 )
+
+        spectrum = np.stack( [loglam, flux] )        
+        return spectrum
         
 
 
