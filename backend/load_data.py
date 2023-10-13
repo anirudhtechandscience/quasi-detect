@@ -2,6 +2,7 @@ from astropy.io import fits as fs
 import numpy as np
 import os
 import logging
+import time
 
 #This class uses standard Python conventions, such as _ to indicate private objects
 #Also, I use CamelCase across the entire codebase, both frontend and backend
@@ -24,8 +25,7 @@ class loadData:
 
 
     def _readSpectra(self, path):
-        spectra = np.empty((0, 2, 5000), dtype=np.longdouble)
-        logging.debug(f"spectra sahpe:{spectra}")
+        spectra = np.empty((0, 2, 5000), dtype=np.longdouble)        
         for fileName in os.listdir(path):
             print(spectra.shape)
             if fileName.endswith('.fits'):
@@ -33,10 +33,13 @@ class loadData:
                 spectrum = self._getSpectrum(filePath)
                 try:
                     spectra = np.append(spectra, [spectrum],axis=0)
+                    logging.debug(f"Spectra shape:{spectra.shape}")
                 except FileNotFoundError:
-                    print("FileNotFoundError")
+                    logging.critical("FileNotFoundError")
                 except Exception as e:
-                    print(f"A error occured reading {filePath}: {e}")
+                    logging.critical(f"A error occured reading {filePath}: {e}")
+                logging.info(f"Final spectra shape:{spectra.shape}")
+                time.sleep(15)
         return spectra
 
     def _getSpectrum(self, filePath):
@@ -51,8 +54,7 @@ class loadData:
             loglam = np.pad(loglam,(0, 5000 - len(loglam)), mode='constant', constant_values=0)
             flux = np.pad(flux, (0,5000 - len(flux)), mode='constant', constant_values=0)
 
-            spectrum = np.stack([loglam, flux])   
-            print(f"Spectrum shape:{spectrum.shape}")     
+            spectrum = np.stack([loglam, flux])     
         return spectrum
         
 
