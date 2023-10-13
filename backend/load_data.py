@@ -1,10 +1,12 @@
 from astropy.io import fits as fs 
 import numpy as np
 import os
-
+import logging
 
 #This class uses standard Python conventions, such as _ to indicate private objects
 #Also, I use CamelCase across the entire codebase, both frontend and backend
+
+
 
 
 class loadData:
@@ -22,16 +24,20 @@ class loadData:
 
 
     def _readSpectra(self, path):
-        spectra = np.empty((0, 2, 5000), dtype=np.longdouble) 
+        spectra = np.empty((0, 2, 5000), dtype=np.longdouble)
+        logging.debug(f"spectra sahpe:{spectra}")
         for fileName in os.listdir(path):
+            print(spectra.shape)
             if fileName.endswith('.fits'):
                 filePath= os.path.join(path, fileName)
+                spectrum = self._getSpectrum(filePath)
                 try:
-                    self.spectra = np.append(spectra, self._getSpectrum(filePath))
+                    spectra = np.append(spectra, [spectrum],axis=0)
                 except FileNotFoundError:
                     print("FileNotFoundError")
                 except Exception as e:
                     print(f"A error occured reading {filePath}: {e}")
+        return spectra
 
     def _getSpectrum(self, filePath):
         """ returns the spectrum from a .fits file """
@@ -42,81 +48,21 @@ class loadData:
             flux = np.array(binHDU['flux'], dtype=np.longdouble)
 
         #TODO: Implement a dynamic maximum pad length system
-        loglam = np.pad( loglam, (0, 5000 - len(loglam)), mode='constant', constant_values=0 )
-        flux = np.pad( flux, (0,5000 - len(flux)), mode='constant', constant_values=0 )
+            loglam = np.pad(loglam,(0, 5000 - len(loglam)), mode='constant', constant_values=0)
+            flux = np.pad(flux, (0,5000 - len(flux)), mode='constant', constant_values=0)
 
-        spectrum = np.stack( [loglam, flux] )        
+            spectrum = np.stack([loglam, flux])   
+            print(f"Spectrum shape:{spectrum.shape}")     
         return spectrum
         
 
 
-    def _loadAllData(self):
-        """
-            This loads the relevant columns from the .fits files , which is basically 
-            the spectrum, and then makes a array with a 0 and 1 for every spectrum, 
-            as the labels(Initially it will just tell quasars apart from other objects 
-            to reduce complexity, later it will detect all kinds of objects). 
-        """ 
-        try:
-            print("Loading other data")
-            for fileName in os.listdir(self._dirPathOther):
-                if fileName.endswith('.fits'):
-                    filePath = os.path.join(self._dirPathOther, fileName)
-                    with fs.open(filePath) as spec:
-                        binHDU = spec[1].data
-                        loglam = np.array(binHDU['loglam'],dtype=np.longdouble)
-                        flux = np.array(binHDU['flux'],dtype=np.longdouble)
-                        #TODO: Implement a dynamic maximum pad length system
-                        loglam = np.pad(loglam, (0, 5000 - len(loglam)), mode='constant'
-                        , constant_values=0)
-
-                        flux = np.pad(flux, (0,5000 - len(flux)), mode='constant'
-                        , constant_values=0)
-
-                        spectrum = np.stack([loglam,flux])
-                        self._othSpectra = np.append(self._othSpectra, 
-                        [spectrum], axis=0)
-                        print(self._othSpectra.shape)
-                    
-            print("Loading quasar data")
-
-            for fileName in os.listdir(self._dirPathQuasar):
-                if fileName.endswith('.fits'):
-                    filePath = os.path.join(self._dirPathQuasar, fileName)
-                    with fs.open(filePath) as spec:
-                        binHDU = spec[1].data
-                        loglam = np.array(binHDU['loglam'],dtype=np.longdouble)
-                        flux = np.array(binHDU['flux'],dtype=np.longdouble)
-                        #TODO: Implement a dynamic maximum pad length system
-                        loglam = np.pad(loglam, (0, self._maxLength - len(loglam))
-                        , mode='constant', constant_values=0)
-
-                        flux = np.pad(flux, (0,self._maxLength - len(flux))
-                        , mode='constant', constant_values=0)
-
-                        spectrum = np.stack([loglam,flux])
-                        self._qsoSpectra = np.append(self._qsoSpectra
-                        ,[spectrum], axis=0)
-                        print(self._qsoSpectra.shape)
-
-            self._othLabels = np.zeros(self._othSpectra.shape[0],dtype=np.int8)
-            self._qsoLabels = np.ones(self._qsoSpectra.shape[0],dtype=np.int8) 
-            self.spectra = np.concatenate((self._qsoSpectra,self._othSpectra),axis=0)
-            self.labels = np.concatenate((self._qsoLabels,self._othLabels),axis=0)
-        except FileNotFoundError:
-            print("FileNotFoundError, please check if the path is valid")
-        except Exception as e:
-            print(f"A error occured : {e}")
 
     def getData(self):
         """
             A simple method to retrieve the data
         """
-        if self.labels:
-            return self.labels
-        else:
-            self._loadAllData()
-            return (self.spectra,self.labels)
+        return (self.spectra,self.labels)
 
 
 class preProcessor:
