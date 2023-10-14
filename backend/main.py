@@ -14,3 +14,6 @@ print(np.max(preProcessedData))
 
 np.savetxt("features.csv",preProcessedData[0],delimiter=",")
 np.savetxt("labels.csv",preProcessedData[1],delimiter=",")
+
+#Here i just save all the data to slightly optimize over my for loop hwen data is loaded
+

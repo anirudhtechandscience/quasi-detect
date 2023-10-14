@@ -39,8 +39,8 @@ class loadData:
                     logging.critical("FileNotFoundError")
                 except Exception as e:
                     logging.critical(f"A error occured reading {filePath}: {e}")
-                logging.info(f"Final spectra shape:{spectra.shape}")
-                time.sleep(15)
+        logging.info(f"Final spectra shape:{spectra.shape}")
+        time.sleep(15)
         return spectra
 
     def _getSpectrum(self, filePath):
@@ -104,7 +104,8 @@ class preProcessor:
     
     def _randomShifts(self):
         """
-            Add some very small random shifts to the spectra,to simulate noise.
+            Add some very small random shifts to the spectra,to simulate noise, 
+            and also to augment the data.
         """
 
         shiftValues = np.array([-0.0001,-0.00009,-0.00008,-0.00007,-0.00006
