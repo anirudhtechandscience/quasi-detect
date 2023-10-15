@@ -7,10 +7,6 @@ import tensorflow as tf
 
 #Implement PowerSign optimizer , discovered by the RNN made by [Bello et. al., 2017](https://arxiv.org/abs/1709.07417)
 
-class ToBeImplementedError(Exception):
-
-    def __init__(self, errormessage):
-        super.__init__(errormessage)
 
 
 class powerSign(tf.keras.optimizers.Optimizer):

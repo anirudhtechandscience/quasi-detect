@@ -51,7 +51,7 @@ class loadData:
             loglam = np.array(binHDU['loglam'], dtype=np.longdouble)
             flux = np.array(binHDU['flux'], dtype=np.longdouble)
 
-        #TODO: Implement a dynamic maximum pad length system
+            #TODO: Implement a dynamic maximum pad length system
             loglam = np.pad(loglam,(0, 5000 - len(loglam)), mode='constant', constant_values=0)
             flux = np.pad(flux, (0,5000 - len(flux)), mode='constant', constant_values=0)
 
