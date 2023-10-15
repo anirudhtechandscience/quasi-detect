@@ -20,7 +20,7 @@ This is a project meant to automate detecting celestial objects. At the moment t
 
 ## So WHAT is your approach then?
 
-I've decided to use a CNN to learn from spectra from SDSS. The reasoning for this is that , well, it just looked like there is MORE data for the model to process than with dim little dots that are like 4 pixels across if I used pictures (of course there are brighter ones, but most quasars are like this). I cannot use the entire catalog at the moment since my computer only has 8GB RAM and it pretty slow overall so I can't overuse batching unless its worth it to wait months for a simple file full of weights. Also, I will probably implement the PowerSign optimizer from [link to paper](https://arxiv.org/abs/1709.07417) to improve the time it takes to converge, which is very important with my very limited hardware. A custom loss is also in order.\0
+I've decided to use a ~~CNN~~ RNN to learn from spectra from SDSS. The reasoning for this is that , well, it just looked like there is MORE data for the model to process than with dim little dots that are like 4 pixels across if I used pictures (of course there are brighter ones, but most quasars are like this). I cannot use the entire catalog at the moment since my computer only has 8GB RAM and it pretty slow overall so I can't overuse batching unless its worth it to wait months for a simple file full of weights. Also, I will probably implement the PowerSign optimizer from [link to paper](https://arxiv.org/abs/1709.07417) to improve the time it takes to converge, which is very important with my very limited hardware. A custom loss is also in order.\0
 
 ## How can you help
 
