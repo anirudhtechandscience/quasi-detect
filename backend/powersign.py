@@ -10,19 +10,22 @@ import tensorflow as tf
 
 
 class powerSign(tf.keras.optimizers.Optimizer):
-    def __init__(self, alpha, beta, lr, useLocking=False, name="PowerSign"):
+    def __init__(self, alpha=0.5, beta=0.5, lr=0.5, epsilon=1e-7, useLocking=False, name="PowerSign"):
         super(powerSign, self).__init__(useLocking, name)
         self.alpha = alpha
         self.beta = beta
         self.learningRate = lr
+        self.epsilon = epsilon
 
         self.tensorAlpha = None
         self.tensorBeta = None
         self.tensorLearningRate = None
+        self.tensorEpsilon = None
 
     def _prepare(self):
         self.tensorAlpha = ops.convert_to_tensor(self.alpha, dtype=tf.float32)
         self.tensorBeta = ops.convert_to_tensor(self.beta, dtype=tf.float32)
+        self.tensorEpsilon = ops.convert_to_tensor(self.epsilon, dtype=tf.float32)
         self.tensorLearningRate = ops.convert_to_tensor(self.learningRate, dtype=tf.float32)
 
     def _create_slots(self, varList):
@@ -32,10 +35,11 @@ class powerSign(tf.keras.optimizers.Optimizer):
     def _apply_dense(self, gradient, weight):
         learningRate = math_ops.cast(self.tensorLearningRate, weight.dtype.base_dtype)
         alpha = math_ops.cast(self.tensorAlpha, weight.dtype.base_dtype)
-        beta = math_ops.cast(self._beta_t, weight.dtype.base_dtype)
+        beta = math_ops.cast(self.tensorBeta, weight.dtype.base_dtype)
+        epsilon = math_ops.cast(self.tensorEpsilon, weight.dtype.base_dtype)
 
         m = self.get_slot(weight, "m")
-        mt = m.assign(tf.maximum(beta * m, tf.abs(gradient)))
+        mt = m.assign(tf.maximum(beta * m + epsilon, tf.abs(gradient)))
         update = state_ops.assign_sub(weight, learningRate * gradient * tf.pow(alpha, tf.sign(mt)*tf.sign(gradient)))
         return control_flow_ops.group(*[update, mt])
 
