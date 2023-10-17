@@ -9,11 +9,9 @@ import tensorflow as tf
 #Also, I use CamelCase across the entire codebase, both frontend and backend
 
 
-
-
 class loadData:
 
-    def __init__(self,qsoPath="/home/tux/Downloads/QSO",
+    def __init__(self, qsoPath="/home/tux/Downloads/QSO",
     othPath="/home/tux/Downloads/oth"):
         qsoSpectra = self._readSpectra(qsoPath)
         othSpectra = self._readSpectra(othPath)
@@ -22,7 +20,6 @@ class loadData:
         qsoLabels = np.ones(qsoSpectra.shape[0], dtype=np.int8)
         othLabels = np.zeros(othSpectra.shape[0], dtype=np.int8)
         self.labels = np.concatenate((qsoLabels, othLabels), axis=0)
-
 
 
     def _readSpectra(self, path):

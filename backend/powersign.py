@@ -8,10 +8,9 @@ import tensorflow as tf
 #Implement PowerSign optimizer , discovered by the RNN made by [Bello et. al., 2017](https://arxiv.org/abs/1709.07417)
 
 
-
-class powerSign(tf.keras.optimizers.Optimizer):
+class PowerSign(tf.keras.optimizers.Optimizer):
     def __init__(self, alpha, beta, lr, useLocking=False, name="PowerSign"):
-        super(powerSign, self).__init__(useLocking, name)
+        super(PowerSign, self).__init__(useLocking, name)
         self.alpha = alpha
         self.beta = beta
         self.learningRate = lr
