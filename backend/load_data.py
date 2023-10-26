@@ -16,8 +16,9 @@ class loadData:
         qsoSpectra = self._readSpectra(qsoPath)
         othSpectra = self._readSpectra(othPath)
         self.spectra = np.concatenate((qsoSpectra, othSpectra), axis=0)
-        
-        qsoLabels = np.ones(qsoSpectra.shape[0], dtype=np.int8)
+
+
+        qsoLabels =  np.ones(qsoSpectra.shape[0], dtype=np.int8)
         othLabels = np.zeros(othSpectra.shape[0], dtype=np.int8)
         self.labels = np.concatenate((qsoLabels, othLabels), axis=0)
 
@@ -83,12 +84,13 @@ class preProcessor:
         """
             Just, well normalizes the data between 0 and 1.
             """
-        loglam = np.empty((0, 5000), dtype=np.float32)
-        flux = np.empty((0, 5000), dtype=np.float32)
+        loglam = np.empty((0))
+        flux = np.empty((0))
         for _ in range(self._spectra.shape[0]):
-            loglam = np.stack([loglam, self._spectra[_][0]])
+            print(self._spectra[_][0].shape)
+            loglam = np.concatenate((loglam, self._spectra[_][0]), axis=None)
         for __ in range(self._spectra.shape[0]):
-            flux = np.stack([flux, self._spectra[__][1]])
+            flux = np.concatenate((flux, self._spectra[__][1]),axis=None)
         normalizeFlux = np.linalg.norm(flux, 'fro')
         normalizeLoglam = np.linalg.norm(loglam, 'fro')
         self._normalizedSpectra = np.copy(self._spectra)
@@ -106,10 +108,10 @@ class preProcessor:
 
     def getData(self):
         if self.outSpectra:
-            return self.outSpectra
+            return (self.outSpectra,self._labels)
         else:
             self._normalize()
             self._convToTensorflowObject()
-            return self.outSpectra()
+            return (self.outSpectra,self._labels)
 
 
