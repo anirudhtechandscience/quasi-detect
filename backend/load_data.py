@@ -87,12 +87,11 @@ class preProcessor:
         loglam = np.empty((0))
         flux = np.empty((0))
         for _ in range(self._spectra.shape[0]):
-            print(self._spectra[_][0].shape)
             loglam = np.concatenate((loglam, self._spectra[_][0]), axis=None)
         for __ in range(self._spectra.shape[0]):
             flux = np.concatenate((flux, self._spectra[__][1]),axis=None)
-        normalizeFlux = np.linalg.norm(flux, 'fro')
-        normalizeLoglam = np.linalg.norm(loglam, 'fro')
+        normalizeFlux = np.linalg.norm(flux)
+        normalizeLoglam = np.linalg.norm(loglam)
         self._normalizedSpectra = np.copy(self._spectra)
         for ___ in range(self._spectra.shape[0]):
             self._normalizedSpectra[___][1] = self._normalizedSpectra[___][1] / normalizeFlux
