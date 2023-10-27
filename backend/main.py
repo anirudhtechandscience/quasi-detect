@@ -3,7 +3,7 @@ import numpy as np
 #simple script to run all the other scipts
 
 anwser = input("Do you want to train the model or run the tests? Type train or test")
-if input == train:
+if anwser == "train":
     dataLoader = loadData()
     data = dataLoader.getData()
 
@@ -11,6 +11,5 @@ if input == train:
     preProcessedData = process.getData()
     preprocessedSpec = preProcessedData[0]
 else:
-
 
 
