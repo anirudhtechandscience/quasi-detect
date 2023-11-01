@@ -42,6 +42,6 @@ class powerSign(tf.keras.optimizers.Optimizer):
         mt = m.assign(tf.maximum(beta * m + epsilon, tf.abs(gradient)))
         update = state_ops.assign_sub(weight, learningRate * gradient * tf.pow(alpha, tf.sign(mt)*tf.sign(gradient)))
         return control_flow_ops.group(*[update, mt])
-
-    def apply_sparse(self, gradient, weight):
+    @staticmethod
+    def apply_sparse(gradient, weight):
         raise NotImplementedError("Currently my implementation of PowerSign doesn't have sparse gradient update,maybe i'll add it in the future ")
