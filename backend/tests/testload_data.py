@@ -1,11 +1,11 @@
 import numpy as np
 import tensorflow as tf
 from backend.src.load_data import loadData, preProcessor
-#TODO : Fix the relative paths, for the moment you'll have to plug the absolute paths in yourself
+# TODO : Fix the relative paths, for the moment you'll have to plug the absolute paths in yourself
 ld = loadData(qsoPath="/home/tux/quasi-detect/backend/src/test/testQSO", othPath="/home/tux/quasi-detect/backend/src/test/testoth")
 
 
-#test the loadData class
+# test the loadData class
 
 def testShape():
     assert ld.spectra.shape == (8, 2, 5000)

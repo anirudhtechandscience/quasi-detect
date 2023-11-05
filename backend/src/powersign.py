@@ -1,47 +1,46 @@
-from tensorflow.python.ops import control_flow_ops
-from tensorflow.python.ops import math_ops
-from tensorflow.python.ops import state_ops
-from tensorflow.python.framework import ops
 import tensorflow as tf
+import keras
 
 
-#Implement PowerSign optimizer , discovered by the RNN made by [Bello et. al., 2017](https://arxiv.org/abs/1709.07417)
+# Implement PowerSign optimizer , discovered by the RNN made by [Bello et. al., 2017](https://arxiv.org/abs/1709.07417)
 
 
-
-class powerSign(tf.keras.optimizers.Optimizer):
-    def __init__(self, alpha=0.3, beta=0.5, lr=0.5, epsilon=1e-7, useLocking=False, name="PowerSign"):
-        super(powerSign, self).__init__(useLocking, name)
+class powerSign(keras.optimizers.Optimizer):
+    def __init__(self, alpha=0.3, beta=0.5,  lr=0.5, epsilon=1e-7, useLocking=False, name="PowerSign"):
+        super().__init__(name, useLocking)
         self.alpha = alpha
         self.beta = beta
         self.learningRate = lr
         self.epsilon = epsilon
+        self._learning_rate = lr
+        self.name = name
+        self.m = None
+        self._index_dict = {}
+        self.slots = {}
 
-        self.tensorAlpha = None
-        self.tensorBeta = None
-        self.tensorLearningRate = None
-        self.tensorEpsilon = None
+    def get_config(self):
+        config = super().get_config()
+        config.update(
+            {
+                "alpha": self.alpha,
+                "beta": self.beta,
+                "learningRate": self.learningRate,
+                "epsilon": self.epsilon,
+                "name": self.name
 
-    def _prepare(self):
-        self.tensorAlpha = ops.convert_to_tensor(self.alpha, dtype=tf.float32)
-        self.tensorBeta = ops.convert_to_tensor(self.beta, dtype=tf.float32)
-        self.tensorLearningRate = ops.convert_to_tensor(self.learningRate, dtype=tf.float32)
-        self.tensorEpsilon = ops.convert_to_tensor(self.epsilon, dtype=tf.float32)
+            }
+        )
 
-    def _create_slots(self, varList):
-        for _ in varList:
-            self._zeros_slot(_, "m", self._name)
+    def build(self, varList):
+        self.slots = [tf.Variable(tf.zeros_like(var), trainable=True) for var in varList]
 
-    def _apply_dense(self, gradient, weight):
-        learningRate = math_ops.cast(self.tensorLearningRate, weight.dtype.base_dtype)
-        alpha = math_ops.cast(self.tensorAlpha, weight.dtype.base_dtype)
-        beta = math_ops.cast(self._beta_t, weight.dtype.base_dtype)
-        epsilon = ops.convert_to_tensor(self.tensorEpsilon, dtype=tf.float32)
+    def update_step(self, gradient, weight):
+        learningRate = self.learningRate
+        alpha = self.alpha
+        beta = self.beta
+        epsilon = tf.cast(self.epsilon, weight.dtype.base_dtype)
 
-        m = self.get_slot(weight, "m")
-        mt = m.assign(tf.maximum(beta * m + epsilon, tf.abs(gradient)))
-        update = state_ops.assign_sub(weight, learningRate * gradient * tf.pow(alpha, tf.sign(mt)*tf.sign(gradient)))
-        return control_flow_ops.group(*[update, mt])
-    @staticmethod
-    def apply_sparse(gradient, weight):
-        raise NotImplementedError("Currently my implementation of PowerSign doesn't have sparse gradient update,maybe i'll add it in the future ")
+        for gradient, weight in zip(gradient, weight):
+            m = self.slots[weight]
+            mt = tf.maximum(beta*m+epsilon, tf.abs(gradient))
+            weight.assign_sub(learningRate*gradient*tf.pow(alpha, tf.sign(mt)*tf.sign(gradient)))
